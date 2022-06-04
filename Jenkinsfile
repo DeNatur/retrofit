@@ -3,19 +3,17 @@ pipeline {
     stages {
         stage("build") {
             steps {
-                sh 'echo "Starting Building Project"'
+                sh 'echo "Prepare Dependencies container"'
 
-                echo "Prepering docker volumins"
-
-                sh 'docker volume create vol-in'
-                sh 'docker volume create vol-out'
-                sh 'git clone https://github.com/DeNatur/retrofit /var/lib/docker/volumes/vol-in/_data'
                 sh 'docker build . -f dependencies.DockerFile dependencies'
+
+                sh 'echo "Prepare Build container"'
+
                 sh 'docker build . -f build.DockerFile builder'
 
-                sh 'docker run \
-                        --mount source=vol-in,target=/vol-in \
-                        --mount source=vol-out,target=/vol-out builder'
+                sh 'echo "Building..."'
+
+                sh 'docker run builder'
             }
         }
 
@@ -23,8 +21,9 @@ pipeline {
             steps {
                 sh 'docker build . -f test.DockerFile tester'
 
-                sh 'docker run \
-                        --mount source=vol-in,target=/vol-in tester'
+                sh 'echo "Testing..."'
+
+                sh 'docker run tester'
             }
         }
     }
