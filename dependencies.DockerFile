@@ -4,7 +4,7 @@ FROM ubuntu:20.04
 RUN ln -fs /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
 
 RUN apt-get update
-RUN apt-get install -y wget unzip openjdk-11-jre-headless
+RUN apt-get install -y wget unzip openjdk-11-jre-headless git
 
 # Download and install Android SDK
 # https://developer.android.com/studio#command-tools
