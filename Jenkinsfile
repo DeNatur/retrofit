@@ -14,23 +14,24 @@ pipeline {
         }
 
         stage("tests and checks") {
+            stages {
+                stage("test") {
+                    steps {
+                        sh 'docker build -f test.DockerFile -t tester .'
 
-            stage("test") {
-                steps {
-                    sh 'docker build -f test.DockerFile -t tester .'
+                        sh 'echo "Testing..."'
 
-                    sh 'echo "Testing..."'
-
-                    sh 'docker run tester'
+                        sh 'docker run tester'
+                    }
                 }
-            }
-            stage("lint check") {
-                steps {
-                    sh 'docker build -f lint.DockerFile -t lint-checker .'
+                stage("lint check") {
+                    steps {
+                        sh 'docker build -f lint.DockerFile -t lint-checker .'
 
-                    sh 'echo "Checking lint..."'
+                        sh 'echo "Checking lint..."'
 
-                    sh 'docker run lint-checker'
+                        sh 'docker run lint-checker'
+                    }
                 }
             }
         }
