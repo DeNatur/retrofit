@@ -4,7 +4,7 @@ pipeline {
         stage("build") {
             steps {
                 sh 'echo "Prepare Dependencies container"'
-
+                
                 sh 'docker build -f dependencies.DockerFile -t dependencies .'
 
                 sh 'echo "Prepare Build container"'
