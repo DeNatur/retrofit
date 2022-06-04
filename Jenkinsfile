@@ -23,5 +23,6 @@ pipeline {
                 sh 'docker run \
                         --mount source=vol-in,target=/vol-in tester'
             }
+        }
     }
 }
