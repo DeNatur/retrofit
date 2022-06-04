@@ -5,11 +5,11 @@ pipeline {
             steps {
                 sh 'echo "Prepare Dependencies container"'
 
-                sh 'docker build . -f dependencies.DockerFile dependencies'
+                sh 'docker build -f dependencies.DockerFile -t dependencies .'
 
                 sh 'echo "Prepare Build container"'
 
-                sh 'docker build . -f build.DockerFile builder'
+                sh 'docker build -f build.DockerFile -t builder .'
 
                 sh 'echo "Building..."'
 
@@ -19,7 +19,7 @@ pipeline {
 
         stage("test") {
             steps {
-                sh 'docker build . -f test.DockerFile tester'
+                sh 'docker build -f test.DockerFile -t tester .'
 
                 sh 'echo "Testing..."'
 
