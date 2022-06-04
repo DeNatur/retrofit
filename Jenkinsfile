@@ -10,20 +10,28 @@ pipeline {
                 sh 'echo "Prepare Build container"'
 
                 sh 'docker build -f build.DockerFile -t builder .'
-
-                sh 'echo "Building..."'
-
-                sh 'docker run builder'
             }
         }
 
-        stage("test") {
-            steps {
-                sh 'docker build -f test.DockerFile -t tester .'
+        stage("tests and checks") {
 
-                sh 'echo "Testing..."'
+            stage("test") {
+                steps {
+                    sh 'docker build -f test.DockerFile -t tester .'
 
-                sh 'docker run tester'
+                    sh 'echo "Testing..."'
+
+                    sh 'docker run tester'
+                }
+            }
+            stage("lint check") {
+                steps {
+                    sh 'docker build -f lint.DockerFile -t lint-checker .'
+
+                    sh 'echo "Checking lint..."'
+
+                    sh 'docker run lint-checker'
+                }
             }
         }
     }
