@@ -5,7 +5,10 @@ pipeline {
             steps {
                 sh 'echo "Starting Building Project"'
 
-                sh './prepare_docker_volumin.sh'
+                echo "Prepering docker volumins"
+
+                sh 'docker volume create vol-in'
+                sh 'docker volume create vol-out'
                 sh 'git clone https://github.com/DeNatur/retrofit /var/lib/docker/volumes/vol-in/_data'
                 sh 'docker build . -f dependencies.DockerFile dependencies'
                 sh 'docker build . -f build.DockerFile builder'
