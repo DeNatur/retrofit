@@ -14,11 +14,11 @@ pipeline {
                 }
             }
             steps{
-                sh 'docker stop publisher'
-                sh 'docker rm publisher'
-                sh 'docker image rm app-compiler'
-                sh 'docker image rm test-compiler'
-                sh 'docker image rm lint-compiler'
+                sh 'docker stop publisher || true'
+                sh 'docker rm publisher || true'
+                sh 'docker image rm app-compiler || true'
+                sh 'docker image rm test-compiler || true'
+                sh 'docker image rm lint-compiler || true'
             }
         }
         stage("dependencies") {
@@ -96,11 +96,11 @@ pipeline {
 
         stage("clean") {
             steps{
-                sh 'docker stop publisher'
-                sh 'docker rm publisher'
-                sh 'docker image rm app-compiler'
-                sh 'docker image rm test-compiler'
-                sh 'docker image rm lint-compiler'
+                sh 'docker stop publisher || true'
+                sh 'docker rm publisher || true'
+                sh 'docker image rm app-compiler || true'
+                sh 'docker image rm test-compiler || true'
+                sh 'docker image rm lint-compiler || true'
             }
         }
     }
