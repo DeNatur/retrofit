@@ -14,6 +14,7 @@ pipeline {
                 }
             }
             steps{
+                sh 'docker stop publisher'
                 sh 'docker rm publisher'
                 sh 'docker image rm app-compiler'
                 sh 'docker image rm test-compiler'
@@ -94,10 +95,12 @@ pipeline {
         }
 
         stage("clean") {
-            steps {
-                sh 'docker rm app-compiler'
-                sh 'docker rm tester'
-                sh 'docker rm lint-checker'
+            steps{
+                sh 'docker stop publisher'
+                sh 'docker rm publisher'
+                sh 'docker image rm app-compiler'
+                sh 'docker image rm test-compiler'
+                sh 'docker image rm lint-compiler'
             }
         }
     }
