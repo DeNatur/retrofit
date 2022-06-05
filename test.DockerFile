@@ -1,3 +1,3 @@
-FROM test-compiler:latest
+FROM app-compiler:latest
 
 RUN ./gradlew test

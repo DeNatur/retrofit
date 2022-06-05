@@ -17,17 +17,19 @@ pipeline {
                         sh 'docker build -f compileapp.DockerFile -t app-compiler .'
                     }
                 }
-                parallel {
-                    stage("compile unit tests") {
-                        steps {
-                            sh 'echo "Compiling unit tests..."'
-                            sh 'docker build -f compileunittests.DockerFile -t test-compiler .'
+                stage("compile tests and checks") {
+                    parallel {
+                        stage("compile unit tests") {
+                            steps {
+                                sh 'echo "Compiling unit tests..."'
+                                sh 'docker build -f compileunittests.DockerFile -t test-compiler .'
+                            }
                         }
-                    }
-                    stage("compile lint checker") {
-                        steps {
-                            sh 'echo "Compiling lint check..."'
-                            sh 'docker build -f compilelintcheck.DockerFile -t lint-compiler .'
+                        stage("compile lint checker") {
+                            steps {
+                                sh 'echo "Compiling lint check..."'
+                                sh 'docker build -f compilelintcheck.DockerFile -t lint-compiler .'
+                            }
                         }
                     }
                 }
