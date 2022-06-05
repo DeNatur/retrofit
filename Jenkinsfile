@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    parameters {
+        string(name: "PROMOTE", defaultValue: false)
+        string(name: "VERSION", defaultValue: "1.0.0")
+    }
     stages {
         stage("dependencies") {
             steps {
@@ -65,6 +69,9 @@ pipeline {
         }
 
         stage("publish") {
+            when {
+                params.publish == true
+            }
             steps {
                 sh 'echo "Publishing ..."'
                 sh 'docker build -f --mount type=volume,src="vol-in", dst=/here/pip publish.DockerFile -t publisher .'
