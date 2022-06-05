@@ -67,8 +67,7 @@ pipeline {
         stage("publish") {
             steps {
                 sh 'echo "Publishing ..."'
-                sh 'docker build -f publish.DockerFile -t publisher .'
-                sh 'docker run publisher --mount type=volume,src="vol-in", dst=/here/pip'
+                sh 'docker build -f --mount type=volume,src="vol-in", dst=/here/pip publish.DockerFile -t publisher .'
             }
         }
 
