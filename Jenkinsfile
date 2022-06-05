@@ -69,9 +69,12 @@ pipeline {
         }
 
         stage("publish") {
-            expression { 
-                return params.ENVIRONMENT == 'RELEASE'
+            when {
+                expression { 
+                    return params.ENVIRONMENT == 'RELEASE'
+                }
             }
+            
             steps {
                 sh 'echo "Publishing ..."'
                 sh 'docker build -f --mount type=volume,src="vol-in", dst=/here/pip publish.DockerFile -t publisher .'
