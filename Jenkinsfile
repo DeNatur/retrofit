@@ -14,6 +14,7 @@ pipeline {
                 }
             }
             steps{
+                sh 'docker rm publisher'
                 sh 'docker image rm app-compiler'
                 sh 'docker image rm test-compiler'
                 sh 'docker image rm lint-compiler'
@@ -86,7 +87,7 @@ pipeline {
 
             steps {
                 sh 'echo "Publishing ..."'
-                sh 'docker run -v $PWD:/retrofit/retrofit/temp app-compiler bash -c \"mv retrofit/build/libs/retrofit* /retrofit/retrofit/temp/\"'
+                sh 'docker run --name publisher -v $PWD:/retrofit/retrofit/temp app-compiler bash -c \"mv retrofit/build/libs/retrofit* /retrofit/retrofit/temp/\"'
                 sh "mv retrofit*.jar retrofit-v${params.VERSION}.jar"
                 archiveArtifacts artifacts: '*.jar'
             }
