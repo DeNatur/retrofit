@@ -16,6 +16,7 @@ pipeline {
             steps{
                 sh 'docker stop publisher || true'
                 sh 'docker rm publisher || true'
+                sh 'docker image rm deploy || true'
                 sh 'docker image rm app-compiler || true'
                 sh 'docker image rm test-compiler || true'
                 sh 'docker image rm lint-compiler || true'
