@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        string(name: "PROMOTE", defaultValue: false)
+        string(name: "ENVIRONMENT", defaultValue: "RELEASE")
         string(name: "VERSION", defaultValue: "1.0.0")
     }
     stages {
@@ -69,8 +69,8 @@ pipeline {
         }
 
         stage("publish") {
-            when {
-                params.publish == true
+            expression { 
+                return params.ENVIRONMENT == 'RELEASE'
             }
             steps {
                 sh 'echo "Publishing ..."'
