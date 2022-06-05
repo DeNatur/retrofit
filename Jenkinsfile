@@ -1,15 +1,32 @@
 pipeline {
     agent any
     stages {
-        stage("build") {
+        stage("dependencies") {
             steps {
-                sh 'echo "Prepare Dependencies container"'
-                
+                sh 'echo "Prepare Depencies..."'
                 sh 'docker build -f dependencies.DockerFile -t dependencies .'
-
-                sh 'echo "Prepare Build container"'
-
-                sh 'docker build -f build.DockerFile -t builder .'
+            }
+        }
+        stage("build") {
+            stages {
+                stage("compile app") {
+                    steps {
+                        sh 'echo "Compiling app..."'
+                        sh 'docker build -f compileapp.DockerFile -t app-compiler .'
+                    }
+                }
+                stage("compile unit tests") {
+                    steps {
+                        sh 'echo "Compiling unit tests..."'
+                        sh 'docker build -f compileunittests.DockerFile -t test-compiler .'
+                    }
+                }
+                stage("compile lint checker") {
+                    steps {
+                        sh 'echo "Compiling unit tests..."'
+                        sh 'docker build -f compilelintcheck.DockerFile -t lint-compiler .'
+                    }
+                }
             }
         }
 
@@ -17,22 +34,26 @@ pipeline {
             stages {
                 stage("test") {
                     steps {
-                        sh 'docker build -f test.DockerFile -t tester .'
-
                         sh 'echo "Testing..."'
-
+                        sh 'docker build -f test.DockerFile -t tester .'
                         sh 'docker run tester'
                     }
                 }
                 stage("lint check") {
                     steps {
-                        sh 'docker build -f lint.DockerFile -t lint-checker .'
-
                         sh 'echo "Checking lint..."'
-
+                        sh 'docker build -f lint.DockerFile -t lint-checker .'
                         sh 'docker run lint-checker'
                     }
                 }
+            }
+        }
+
+        stage("deploy") {
+            steps {
+                sh 'echo "Deploying ..."'
+                sh 'docker build -f deploy.DockerFile -t lint-checker .'
+                sh 'docker run lint-checker'
             }
         }
     }

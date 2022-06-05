@@ -1,5 +1,15 @@
+plugins {
+    id "application"
+}
 apply plugin: 'java-library'
+apply plugin : "java" 
+ext {
+   javaMainClass = "com.example.retrofit.SimpleService"
+}
 
+application {
+    mainClassName = javaMainClass
+}
 dependencies {
   implementation projects.retrofit
   implementation projects.retrofitMock
