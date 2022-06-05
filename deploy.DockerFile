@@ -1,3 +1,5 @@
 FROM app-compiler:latest
 
-RUN ./gradlew run
+RUN cat samples/build.gradle
+RUN ./gradlew samples:tasks
+RUN ./gradlew samples:runWithJavaExec
