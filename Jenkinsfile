@@ -44,6 +44,7 @@ pipeline {
                         sh 'docker build -f test.DockerFile -t tester .'
                         sh 'docker run tester'
                     }
+                    
                 }
                 stage("lint check") {
                     steps {
