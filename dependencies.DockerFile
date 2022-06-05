@@ -18,5 +18,3 @@ RUN mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && \
 
 # Android command line tools licenses need to be accepted before running
 RUN yes | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --licenses
- 
-RUN git clone https://github.com/DeNatur/retrofit

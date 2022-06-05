@@ -8,8 +8,6 @@ pipeline {
         stage("dependencies") {
             steps {
                 sh 'echo "Prepare Dependencies..."'
-                sh 'docker volume create --name vol-out'
-                sh 'docker inspect vol-out'
                 sh 'docker build -f dependencies.DockerFile -t dependencies .'
             }
         }
@@ -46,14 +44,12 @@ pipeline {
                     steps {
                         sh 'echo "Testing..."'
                         sh 'docker build -f test.DockerFile -t tester .'
-                        sh 'docker run tester'
                     }
                 }
                 stage("lint check") {
                     steps {
                         sh 'echo "Checking lint..."'
                         sh 'docker build -f lint.DockerFile -t lint-checker .'
-                        sh 'docker run lint-checker'
                     }
                 }
             }
@@ -63,8 +59,7 @@ pipeline {
         stage("deploy") {
             steps {
                 sh 'echo "Deploying ..."'
-                sh 'docker build -f deploy.DockerFile -t lint-checker .'
-                sh 'docker run lint-checker'
+                sh 'docker build -f deploy.DockerFile -t deploy .'
             }
         }
 
@@ -74,10 +69,11 @@ pipeline {
                     return params.ENVIRONMENT == 'RELEASE'
                 }
             }
-            
+
             steps {
                 sh 'echo "Publishing ..."'
-                sh 'docker build -f --mount type=volume,src="vol-in", dst=/here/pip publish.DockerFile -t publisher .'
+                sh 'docker run -v $PWD:/retrofit/retrofit/temp app-compiler bash -c \"mv retrofit/build/libs/retrofit* /retrofit/retrofit/temp/\"'
+                archiveArtifacts artifacts: '*.jar'
             }
         }
 
