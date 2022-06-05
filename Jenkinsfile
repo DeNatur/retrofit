@@ -3,28 +3,32 @@ pipeline {
     stages {
         stage("dependencies") {
             steps {
-                sh 'echo "Prepare Depencies..."'
+                sh 'echo "Prepare Dependencies..."'
+                sh 'docker volume create --name vol-out'
+                sh 'docker inspect vol-out'
                 sh 'docker build -f dependencies.DockerFile -t dependencies .'
             }
         }
         stage("build") {
-            parallel {
+            stages {
                 stage("compile app") {
                     steps {
                         sh 'echo "Compiling app..."'
                         sh 'docker build -f compileapp.DockerFile -t app-compiler .'
                     }
                 }
-                stage("compile unit tests") {
-                    steps {
-                        sh 'echo "Compiling unit tests..."'
-                        sh 'docker build -f compileunittests.DockerFile -t test-compiler .'
+                parallel {
+                    stage("compile unit tests") {
+                        steps {
+                            sh 'echo "Compiling unit tests..."'
+                            sh 'docker build -f compileunittests.DockerFile -t test-compiler .'
+                        }
                     }
-                }
-                stage("compile lint checker") {
-                    steps {
-                        sh 'echo "Compiling unit tests..."'
-                        sh 'docker build -f compilelintcheck.DockerFile -t lint-compiler .'
+                    stage("compile lint checker") {
+                        steps {
+                            sh 'echo "Compiling lint check..."'
+                            sh 'docker build -f compilelintcheck.DockerFile -t lint-compiler .'
+                        }
                     }
                 }
             }
@@ -57,5 +61,14 @@ pipeline {
                 sh 'docker run lint-checker'
             }
         }
+
+        stage("publish") {
+            steps {
+                sh 'echo "Publishing ..."'
+                sh 'docker build -f publish.DockerFile -t publisher .'
+                sh 'docker run publisher --mount type=volume,src="vol-in", dst=/here/pip'
+            }
+        }
+
     }
 }
