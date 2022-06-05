@@ -1,3 +1,3 @@
-FROM dependencies:latest
-WORKDIR retrofit
+FROM app-compiler:latest
+
 RUN ./gradlew compileLint

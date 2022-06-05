@@ -1,3 +1,3 @@
-FROM app-compiler:latest
+FROM lint-compiler:latest
 
 RUN ./gradlew lint
