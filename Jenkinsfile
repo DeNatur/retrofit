@@ -5,6 +5,18 @@ pipeline {
         string(name: "VERSION", defaultValue: "1.0.0")
     }
     stages {
+
+        // Necessery to provide new changes if previous build failed
+        stage("initial cleanup"){
+            when {
+                expression {
+                    !("SUCCESS".equals(currentBuild.previousBuild.result))
+                }
+            }
+            steps{
+                sh 'docker rm app-compiler'
+            }
+        }
         stage("dependencies") {
             steps {
                 sh 'echo "Prepare Dependencies..."'
@@ -73,10 +85,17 @@ pipeline {
             steps {
                 sh 'echo "Publishing ..."'
                 sh 'docker run -v $PWD:/retrofit/retrofit/temp app-compiler bash -c \"mv retrofit/build/libs/retrofit* /retrofit/retrofit/temp/\"'
-                sh "mv retrofit*.jar retrofitv${params.VERSION}.jar"
+                sh "mv retrofit*.jar retrofit-v${params.VERSION}.jar"
                 archiveArtifacts artifacts: '*.jar'
             }
         }
 
+        stage("clean") {
+            steps {
+                sh 'docker rm app-compiler'
+                sh 'docker rm tester'
+                sh 'docker rm lint-checker'
+            }
+        }
     }
 }
