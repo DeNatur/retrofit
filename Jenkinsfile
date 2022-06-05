@@ -73,7 +73,7 @@ pipeline {
             steps {
                 sh 'echo "Publishing ..."'
                 sh 'docker run -v $PWD:/retrofit/retrofit/temp app-compiler bash -c \"mv retrofit/build/libs/retrofit* /retrofit/retrofit/temp/\"'
-                sh "mv retrofit*.jar retrofitv${params.VERSION)}jar"
+                sh "mv retrofit*.jar retrofitv${params.VERSION}jar"
                 archiveArtifacts artifacts: '*.jar'
             }
         }
