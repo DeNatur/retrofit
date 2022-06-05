@@ -6,22 +6,6 @@ pipeline {
     }
     stages {
 
-        // Necessery to provide new changes if previous build failed
-        stage("initial cleanup"){
-            when {
-                expression {
-                    !("SUCCESS".equals(currentBuild.previousBuild.result))
-                }
-            }
-            steps{
-                sh 'docker kill $(docker ps -q) || true'
-                sh 'docker rm $(docker ps -a -q) || true'
-                sh 'docker image rm deploy || true'
-                sh 'docker image rm app-compiler || true'
-                sh 'docker image rm test-compiler || true'
-                sh 'docker image rm lint-compiler || true'
-            }
-        }
         stage("dependencies") {
             steps {
                 sh 'echo "Prepare Dependencies..."'
@@ -33,7 +17,7 @@ pipeline {
                 stage("compile app") {
                     steps {
                         sh 'echo "Compiling app..."'
-                        sh 'docker build -f compileapp.DockerFile -t app-compiler .'
+                        sh 'docker build --no-cache -f compileapp.DockerFile -t app-compiler .'
                     }
                 }
                 stage("compile tests and checks") {
@@ -41,13 +25,13 @@ pipeline {
                         stage("compile unit tests") {
                             steps {
                                 sh 'echo "Compiling unit tests..."'
-                                sh 'docker build -f compileunittests.DockerFile -t test-compiler .'
+                                sh 'docker build --no-cache -f compileunittests.DockerFile -t test-compiler .'
                             }
                         }
                         stage("compile lint checker") {
                             steps {
                                 sh 'echo "Compiling lint check..."'
-                                sh 'docker build -f compilelintcheck.DockerFile -t lint-compiler .'
+                                sh 'docker build --no-cache -f compilelintcheck.DockerFile -t lint-compiler .'
                             }
                         }
                     }
@@ -92,16 +76,8 @@ pipeline {
                 sh 'docker run --name publisher -v $PWD:/retrofit/retrofit/temp app-compiler bash -c \"mv retrofit/build/libs/retrofit* /retrofit/retrofit/temp/\"'
                 sh "mv retrofit*.jar retrofit-v${params.VERSION}.jar"
                 archiveArtifacts artifacts: '*.jar'
-            }
-        }
-
-        stage("clean") {
-            steps{
-                sh 'docker kill $(docker ps -q) || true'
-                sh 'docker rm $(docker ps -a -q) || true'
-                sh 'docker image rm app-compiler || true'
-                sh 'docker image rm test-compiler || true'
-                sh 'docker image rm lint-compiler || true'
+                sh 'echo "Cleaning remaining artifacts"'
+                sh 'rm *.jar'
             }
         }
     }
