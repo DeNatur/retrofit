@@ -14,7 +14,9 @@ pipeline {
                 }
             }
             steps{
-                sh 'docker rm app-compiler'
+                sh 'docker image rm app-compiler'
+                sh 'docker image rm test-compiler'
+                sh 'docker image rm lint-compiler'
             }
         }
         stage("dependencies") {
