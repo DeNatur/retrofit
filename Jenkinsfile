@@ -9,24 +9,22 @@ pipeline {
         }
         stage("build") {
             parallel {
-                stages {
-                    stage("compile app") {
-                        steps {
-                            sh 'echo "Compiling app..."'
-                            sh 'docker build -f compileapp.DockerFile -t app-compiler .'
-                        }
+                stage("compile app") {
+                    steps {
+                        sh 'echo "Compiling app..."'
+                        sh 'docker build -f compileapp.DockerFile -t app-compiler .'
                     }
-                    stage("compile unit tests") {
-                        steps {
-                            sh 'echo "Compiling unit tests..."'
-                            sh 'docker build -f compileunittests.DockerFile -t test-compiler .'
-                        }
+                }
+                stage("compile unit tests") {
+                    steps {
+                        sh 'echo "Compiling unit tests..."'
+                        sh 'docker build -f compileunittests.DockerFile -t test-compiler .'
                     }
-                    stage("compile lint checker") {
-                        steps {
-                            sh 'echo "Compiling unit tests..."'
-                            sh 'docker build -f compilelintcheck.DockerFile -t lint-compiler .'
-                        }
+                }
+                stage("compile lint checker") {
+                    steps {
+                        sh 'echo "Compiling unit tests..."'
+                        sh 'docker build -f compilelintcheck.DockerFile -t lint-compiler .'
                     }
                 }
             }
@@ -34,20 +32,18 @@ pipeline {
 
         stage("tests and checks") {
             parallel {
-                stages {
-                    stage("test") {
-                        steps {
-                            sh 'echo "Testing..."'
-                            sh 'docker build -f test.DockerFile -t tester .'
-                            sh 'docker run tester'
-                        }
+                stage("test") {
+                    steps {
+                        sh 'echo "Testing..."'
+                        sh 'docker build -f test.DockerFile -t tester .'
+                        sh 'docker run tester'
                     }
-                    stage("lint check") {
-                        steps {
-                            sh 'echo "Checking lint..."'
-                            sh 'docker build -f lint.DockerFile -t lint-checker .'
-                            sh 'docker run lint-checker'
-                        }
+                }
+                stage("lint check") {
+                    steps {
+                        sh 'echo "Checking lint..."'
+                        sh 'docker build -f lint.DockerFile -t lint-checker .'
+                        sh 'docker run lint-checker'
                     }
                 }
             }
