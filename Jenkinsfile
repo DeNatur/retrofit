@@ -54,13 +54,12 @@ pipeline {
                     }
                 }
             }
-
         }
 
         stage("deploy") {
             steps {
                 sh 'echo "Deploying ..."'
-                sh 'docker build -f deploy.DockerFile -t deploy .'
+                sh 'docker build -f deploy.DockerFile -t deployer .'
             }
         }
 
